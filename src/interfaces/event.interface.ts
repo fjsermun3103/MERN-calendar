@@ -5,8 +5,9 @@ export interface MyEvent {
     start: Date;
     end: Date;
     bgcolor?: string;
-    user: {
-        _id: string;
-        name: string;
-    }
+    user?: {
+        _id?: string;
+        name?: string;
+    } | undefined;
+
 }

@@ -11,8 +11,7 @@ import { useUiStore } from '../../hooks/useUiStore';
 import { useCalendarStore } from '../../hooks/useCalendarStore';
 import type { MyEvent } from '../../interfaces/event.interface';
 import { FabAddNew } from '../components/FabAddNew';
-
-
+import { FabDelete } from '../components/FabDelete';
 
 export const CalendarPage = () => {
 
@@ -38,13 +37,11 @@ export const CalendarPage = () => {
         }
     }
 
-
     const onDoubleClick = () => {
         openDateModal();
     }
 
     const onSelect = (event: MyEvent) => {
-        console.log({ click: event });
         setActiveEvent(event);
     }
 
@@ -76,6 +73,7 @@ export const CalendarPage = () => {
             />
             <CalendarModal/>
             <FabAddNew/>
+            <FabDelete />
         </>
     )
 }
