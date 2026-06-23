@@ -10,11 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.12.0",
     "date-fns": "^2.30.0",
     "react": "^19.2.6",
     "react-big-calendar": "^1.20.0",
+    "react-datepicker": "^9.1.0",
     "react-dom": "^19.2.6",
+    "react-modal": "^3.16.3",
+    "react-redux": "^9.3.0",
     "react-router": "^8.0.1",
+    "sweetalert2": "^11.26.25",
     "zustand": "^5.0.14"
   },
   "devDependencies": {
@@ -26,6 +31,7 @@
     "@types/react": "^19.2.14",
     "@types/react-big-calendar": "^1.16.3",
     "@types/react-dom": "^19.2.3",
+    "@types/react-modal": "^3.16.3",
     "@vitejs/plugin-react": "^6.0.1",
     "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "^10.3.0",

@@ -1,11 +1,11 @@
-import type { MyEvent } from "../pages/CalendarPage";
+import type { MyEvent } from "../../interfaces/event.interface";
 
 
-export interface CalendarEvent {
-    event : MyEvent
+export interface CalendarEventProps{
+    event : MyEvent;
 };
 
-export const CalendarEvent = ({event}: CalendarEvent)=> {
+export const CalendarEvent = ({event}: CalendarEventProps)=> {
     
     const { title, user } = event;
 
