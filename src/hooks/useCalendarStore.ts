@@ -5,6 +5,7 @@ import type { MyEvent } from "../interfaces/event.interface";
 import calendarApi from "../api/calendarApi";
 import { convertEventsToDateEvents } from "../helpers/convertEventsToDateEvents";
 import Swal from "sweetalert2";
+import { useCallback, useMemo } from "react";
 
 
 export const useCalendarStore = () => {
@@ -13,15 +14,20 @@ export const useCalendarStore = () => {
     const {events, activeEvent} = useSelector((state:RootState) => state.calendar) 
     const {user} = useSelector((state:RootState) => state.auth);
 
-    const parsedEvents = events.map(event => ({
-        ...event,
-        start: new Date(event.start),
-        end: new Date(event.end),
-    }));
+    const parsedEvents = useMemo(() => 
+        events.map(event => ({
+            ...event,
+            start: new Date(event.start),
+            end: new Date(event.end),
+        }))
+    , [events]);  // solo recalcula cuando cambian los eventos del store
 
-    const parsedActiveEvent = activeEvent
-        ? { ...activeEvent, start: new Date(activeEvent.start), end: new Date(activeEvent.end) }
-        : null;
+    const parsedActiveEvent = useMemo(() => 
+        activeEvent
+            ? { ...activeEvent, start: new Date(activeEvent.start), end: new Date(activeEvent.end) }
+            : null
+    , [activeEvent]);
+
 
     const setActiveEvent = (event: MyEvent) => {
         dispatch(onSetActiveEvent({
@@ -63,16 +69,16 @@ export const useCalendarStore = () => {
         }
     };
 
-    const startLoadingEvents = async() => {
+    const startLoadingEvents = useCallback(async () => {
         try {
             const { data } = await calendarApi.get('/events');
             const events = convertEventsToDateEvents(data.eventos);
-            dispatch( onLoadEvents( events ) );
+            dispatch(onLoadEvents(events));
         } catch (error) {
             console.log('Error cargando eventos');
             console.log(error);
         }
-    };
+    }, [dispatch]);
 
     return {
         //* Properties

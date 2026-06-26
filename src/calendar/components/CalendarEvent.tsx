@@ -13,7 +13,7 @@ export const CalendarEvent = ({event}: CalendarEventProps)=> {
     return (
         <div className="text-wrap text-break">
             <strong>{title}</strong>
-            <span>- {user.name}</span>
+            <span>- {user?.name}</span>
         </div>
     )
 }
