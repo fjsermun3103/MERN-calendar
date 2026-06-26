@@ -98,8 +98,8 @@ export const CalendarModal = () => {
 
         await startSavingEvent({
             ...formValues,
-            start: formValues.start.toISOString(),
-            end: formValues.end.toISOString(),
+            start: formValues.start,
+            end: formValues.end,
         });
         closeDateModal();
         setFormSubmitted(false);

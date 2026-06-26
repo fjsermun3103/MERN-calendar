@@ -1,8 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { addHours } from "date-fns";
 
 export interface CalendarEventStore {
-    _id?: number | string;
+    id?: number | string;
     title: string;
     notes: string;
     start: Date;
@@ -15,27 +14,14 @@ export interface CalendarEventStore {
 }
 
 interface CalendarState {
+    isLoadingEvents: boolean;
     events: CalendarEventStore[];
-    activeEvent: CalendarEventStore | null; 
-}
-
-const now = new Date();
-
-const tempEvent: CalendarEventStore = {
-    _id: now.getTime(),
-    title: 'Cumpleaños del jefe',
-    notes: 'Hay que comprar tarta',
-    start: now,
-    end: addHours(now, 2),
-    bgcolor: '#fafafa',
-    user: {
-        _id: '123',
-        name: 'Paco',
-    }
+    activeEvent: CalendarEventStore | null;
 }
 
 const initialState: CalendarState = {
-    events: [tempEvent],
+    isLoadingEvents: true,
+    events: [],
     activeEvent: null,
 }
 
@@ -46,28 +32,52 @@ export const calendarSlice = createSlice({
         onSetActiveEvent: (state, { payload }: PayloadAction<CalendarEventStore>) => {
             state.activeEvent = payload;
         },
-        onAddNewEvent: ( state, { payload }: PayloadAction<CalendarEventStore> ) => {
-            state.events.push( payload );
+        onAddNewEvent: (state, { payload }: PayloadAction<CalendarEventStore>) => {
+            state.events.push(payload);
             state.activeEvent = null;
 
         },
-        onUpdateEvent: ( state, {payload}: PayloadAction<CalendarEventStore> ) => {
-            state.events = state.events.map( event => {
-                if (event._id === payload._id) {
+        onUpdateEvent: (state, { payload }: PayloadAction<CalendarEventStore>) => {
+            state.events = state.events.map(event => {
+                if (event.id === payload.id) {
                     return payload;
                 }
 
                 return event;
-            } );
+            });
         },
         onDeleteEvent: (state) => {
-            if ( state.activeEvent ) {
-                state.events = state.events.filter( event => event._id !== state.activeEvent?._id )
+            if (state.activeEvent) {
+                state.events = state.events.filter(event => event.id !== state.activeEvent?.id)
                 state.activeEvent = null;
             }
         },
+        onLoadEvents: (state, { payload = [] }) => {
+            state.isLoadingEvents = false;
+            state.events = payload;
+            payload.forEach((event: any) => {
+                const exists = state.events.some(dbEvent => dbEvent.id === event.id);
+                if (!exists) {
+                    state.events.push(event);
+                };
+
+            });
+        },
+
+        onLogoutCalendar: (state) => {
+            state.isLoadingEvents = true;
+            state.events = [];
+            state.activeEvent = null;
+        }
     },
 })
 
 // Action creators are generated for each case reducer function
-export const { onSetActiveEvent, onAddNewEvent, onUpdateEvent, onDeleteEvent } = calendarSlice.actions;
+export const {
+    onSetActiveEvent,
+    onAddNewEvent,
+    onUpdateEvent,
+    onDeleteEvent,
+    onLoadEvents,
+    onLogoutCalendar,
+} = calendarSlice.actions;

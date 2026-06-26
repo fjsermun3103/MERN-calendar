@@ -4,7 +4,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { NavbarComponent } from "../components/NavbarComponent"
 import { localizer } from '../../helpers/calendarLocalizer';
 import { getMessagesES } from '../../helpers/getMessagesES';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CalendarEvent } from '../components/CalendarEvent';
 import { CalendarModal } from '../components/CalendarModal';
 import { useUiStore } from '../../hooks/useUiStore';
@@ -12,11 +12,13 @@ import { useCalendarStore } from '../../hooks/useCalendarStore';
 import type { MyEvent } from '../../interfaces/event.interface';
 import { FabAddNew } from '../components/FabAddNew';
 import { FabDelete } from '../components/FabDelete';
+import { useAuthStore } from '../../hooks/useAuthStore';
 
 export const CalendarPage = () => {
 
+    const {user} = useAuthStore();
     const { openDateModal } = useUiStore();
-    const { events, setActiveEvent } = useCalendarStore();
+    const { events, setActiveEvent, startLoadingEvents } = useCalendarStore();
 
     const [date, setDate] = useState(new Date());
     const [lastView, setLastView] = useState<View>(() => {
@@ -24,17 +26,21 @@ export const CalendarPage = () => {
         return storedView || 'week';
     });
 
-    const eventStyleGetter: EventPropGetter<MyEvent> = ({/*event, start, end, isSelected*/ }) => {
-
+    const eventStyleGetter: EventPropGetter<MyEvent> = (event) => {
+    
+        const isMyEvent = !!user && !!event.user && (
+            user.uid === event.user._id || 
+            user.uid === event.user._id
+        );
+        
         const style = {
-            backgroundColor: '#347CF7',
+            backgroundColor: isMyEvent ? '#347CF7' : '#465660',
             borderRadius: '0px',
             opacity: 0.8,
             color: 'white',
-        }
-        return {
-            style
-        }
+        };
+
+        return { style };
     }
 
     const onDoubleClick = () => {
@@ -49,6 +55,11 @@ export const CalendarPage = () => {
         setLastView(view);
         localStorage.setItem('lastView', view);
     }
+
+    useEffect(() => {
+        startLoadingEvents();
+    }, []);
+
     return (
         <>
             <NavbarComponent />
